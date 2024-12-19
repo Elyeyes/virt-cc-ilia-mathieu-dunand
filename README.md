@@ -1,2 +1,6 @@
-# Cloud_Texas_TI
+# virt-cc-ilia-mathieu-dunand
+
 Calculatrice Cloud Native
+
+Tom Dunand
+Elyes Mathieu
