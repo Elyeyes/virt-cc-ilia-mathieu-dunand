@@ -24,7 +24,7 @@ def calculate():
 # Requête test POST calcul : curl -X POST http://localhost:5000/api/calculate -H "Content-Type: application/json" -d "{\"expression\": \"2+2\"}"
 
 
-@api.route('/api/sum/<id>', methods=['GET'])
+@api.route('/api/result/<id>', methods=['GET'])
 def result(id):
     result = results.get(id)
     
