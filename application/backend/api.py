@@ -1,7 +1,7 @@
 import json
 import redis
 from flask import Flask, jsonify, request
-from flask_cors import CORS
+from flask_cors import CORS # type: ignore
 
 api = Flask(__name__)
 CORS(api)
