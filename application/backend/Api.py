@@ -1,7 +1,12 @@
 import json
+import redis
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 
 api = Flask(__name__)
+CORS(api)
+
+r = redis.Redis(host='localhost', port=6379, decode_responses=True, db=0)
 
 results = {}
 
@@ -15,8 +20,8 @@ def calculate():
     expression = data.get('expression')
     try:
         result = eval(expression)
-        calc_id = str(len(results) + 1)
-        results[calc_id] = result
+        calc_id = str(r.incr('calc_id')) 
+        r.set(calc_id, result)
         return jsonify({"id": calc_id, "result": result})
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -26,14 +31,14 @@ def calculate():
 
 @api.route('/api/result/<id>', methods=['GET'])
 def result(id):
-    result = results.get(id)
+    result = r.get(id)
     
     if not result:
         return jsonify({'error': 'Result not found'}), 404
     
     return jsonify(result), 200
 
-# Requête test GET résultat : curl -X GET http://localhost:5000/api/sum/<id> --> s'assurer d'avoir fait une requête post pour un calcul avant et remplacer l'<id>
+# Requête test GET résultat : curl -X GET http://localhost:5000/api/result/<id> --> s'assurer d'avoir fait une requête post pour un calcul avant et remplacer l'<id>
 
 if __name__ == '__main__':
    api.run(debug=True, host='0.0.0.0', port=5000)
