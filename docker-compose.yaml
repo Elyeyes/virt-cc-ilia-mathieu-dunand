@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./application/backend
+    container_name: backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - rabbitmq
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - RABBITMQ_HOST=rabbitmq
+
+  frontend:
+    build: ./application/frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"
+
+  consumer:
+    build: ./application/consumer
+    container_name: consumer
+    depends_on:
+      - rabbitmq
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - RABBITMQ_HOST=rabbitmq
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest

@@ -1,4 +1,4 @@
-import json
+import pika
 import redis
 from flask import Flask, jsonify, request
 from flask_cors import CORS # type: ignore
@@ -6,7 +6,7 @@ from flask_cors import CORS # type: ignore
 api = Flask(__name__)
 CORS(api)
 
-r = redis.Redis(host='localhost', port=6379, decode_responses=True, db=0)
+r = redis.Redis(host='redis', port=6379, decode_responses=True, db=0)
 
 results = {}
 
