@@ -1,6 +1,6 @@
 import requests
 
-BASE_URL = "http://localhost:5000"
+BASE_URL = "http://127.0.0.1:5000"
 
 def test_home():
     """Test de la route /"""
@@ -30,12 +30,12 @@ def test_get_result(result_id):
     response = requests.get(f"{BASE_URL}/api/result/{result_id}")
     response_json = response.json()
 
-    if isinstance(response_json, dict) and "error" not in response_json:
+    if response.status_code == 200 :
         print("Resultat trouvé")
-        print(f"Response: {response}")
+        print(f"Response: {response_json}")
     else:
         print("Resultat non trouvé")
-        print(f"Response: {response}")
+        print(f"Response: {response_json}")
 
 if __name__ == "__main__":
     print("Test")
