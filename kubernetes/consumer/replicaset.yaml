@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: consumer
+  namespace: dunand-mathieu
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: consumer
+  template:
+    metadata:
+      labels:
+        app: consumer
+    spec:
+      containers:
+        - name: consumer
+          image: <consumer-image> # Remplace par l'image Docker du consumer
+          env:
+            - name: API_URL
+              value: "http://api-service:80" # URL de l'API
+          resources:
+            requests:
+              cpu: "4m"
+              memory: "32Mi"
