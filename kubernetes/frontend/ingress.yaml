@@ -3,9 +3,8 @@ kind: Ingress
 metadata:
   name: calculatrice-ingress
   namespace: dunand-mathieu
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
 spec:
+  ingressClassName: nginx
   rules:
     - host: calculatrice-dunand-mathieu-polytech-dijon.kiowy.net
       http:
