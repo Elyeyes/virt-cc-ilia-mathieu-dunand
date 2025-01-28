@@ -45,7 +45,7 @@ resource "scaleway_lb" "prod_lb" {
 }
 
 resource "scaleway_domain_record" "prod_dns" {
-  dns_zone = "domain.tld"
+  dns_zone = "kiowy.net"
   name     = "calculatrice-dunand-mathieu-polytech-dijon.kiowy.net"
   type     = "A"
   data     = "1.2.3.4"
@@ -54,7 +54,7 @@ resource "scaleway_domain_record" "prod_dns" {
 }
 
 resource "scaleway_domain_record" "dev_dns" {
-  dns_zone = "domain.tld"
+  dns_zone = "kiowy.net"
   name     = "calculatrice-dev-dunand-mathieu-polytech-dijon.kiowy.net"
   type     = "A"
   data     = "1.2.3.4"

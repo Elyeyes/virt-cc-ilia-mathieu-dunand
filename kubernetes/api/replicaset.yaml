@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: api
+  namespace: dunand-mathieu
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: <api-image> # Remplace par l'image Docker de l'API
+          env:
+            - name: DB_HOST
+              value: "redis" # Adresse du service Redis
+            - name: DB_PORT
+              value: "6379"
+          resources:
+            requests:
+              cpu: "4m"
+              memory: "32Mi"

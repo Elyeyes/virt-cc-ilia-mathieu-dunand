@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: calculatrice-ingress
+  namespace: dunand-mathieu
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: calculatrice-dunand-mathieu-polytech-dijon.kiowy.net
+      http:
+        paths:
+          - path: / # Pour le frontend
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
+          - path: /api # Pour l'API
+            pathType: Prefix
+            backend:
+              service:
+                name: api-service
+                port:
+                  number: 80
+          - path: /consumer # Pour le Consumer
+            pathType: Prefix
+            backend:
+              service:
+                name: consumer-service
+                port:
+                  number: 80
