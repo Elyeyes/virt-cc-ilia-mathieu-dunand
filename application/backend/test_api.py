@@ -16,9 +16,9 @@ def test_calculate():
     response = requests.post(f"{BASE_URL}/api/calculate", headers={"Content-Type": "application/json"}, data=expression)
     response_json = response.json()
 
-    if "id" in response_json and "result" in response_json:
+    if response.status_code == 200 : 
         print("Test calcul réussi")
-        print(f"Response: {response}")
+        print(f"Response: {response}, id : {response_json['id']}")
         return response_json["id"] 
     else:
         print("Test calcul failed")

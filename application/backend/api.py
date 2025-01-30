@@ -1,4 +1,5 @@
 import pika
+import time
 import os
 import redis
 from flask import Flask, jsonify, request
@@ -9,14 +10,17 @@ CORS(api)
 
 r = redis.Redis(host='redis', port=6379, decode_responses=True, db=0)
 
-try:
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
-    channel = connection.channel()
-    channel.queue_declare(queue='calculs_queue', durable=True)
-except pika.exceptions.AMQPConnectionError as e:
-    print(f"Error connecting to RabbitMQ: {e}")
-    connection = None
-    channel = None
+while True:
+    try:
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', heartbeat=30))
+        channel = connection.channel()
+        channel.queue_declare(queue='calculs_queue', durable=True)
+        break
+    except pika.exceptions.AMQPConnectionError as e:
+        print(f"Waiting for connection to RabbitMQ: {e}")
+        time.sleep(4)
+        connection = None
+        channel = None
 
 results = {}
 
@@ -31,12 +35,16 @@ def calculate():
     calc_id = str(r.incr('calc_id')) 
     try:
         import json
-        channel.basic_publish(exchange='',
-                      routing_key='calculs_queue',
-                      body=json.dumps({'expression': expression,
-                                       'calc_id': calc_id}))
-        print(" [x] Sent {body}")
-        return jsonify({"id": calc_id, "calcul": expression}), 200
+        if channel is not None:
+            channel.basic_publish(exchange='',
+                          routing_key='calculs_queue',
+                          body=json.dumps({'expression': expression,
+                                           'calc_id': calc_id}))
+            print(f" [x] Sent {json.dumps({'expression': expression, 'calc_id': calc_id})}")
+            return jsonify({"id": calc_id, "calcul": expression}), 200
+        else:
+            print("RabbitMQ channel is not available")
+            return jsonify({"error": "RabbitMQ channel is not available"}), 500
     except Exception as e:
         return jsonify({"error queuing the calc": str(e)}), 400
 
@@ -45,12 +53,18 @@ def calculate():
 
 @api.route('/api/result/<id>', methods=['GET'])
 def result(id):
-    result = r.get(id)
-    
-    if not result:
-        return jsonify({'error': 'Result not found'}), 404
-    
-    return jsonify(result), 200
+    while True:
+        try:
+            result = r.get(id)
+            print(f"Result for {id}: {result}")
+            time.sleep(1)
+            if result is None:
+                continue
+            break
+        except redis.exceptions.ConnectionError as e:
+            print(f"Waiting for connection to Redis: {e}")
+            continue
+    return jsonify({'result': result}), 200
 
 # Requête test GET résultat : curl -X GET http://localhost:5000/api/result/<id> --> s'assurer d'avoir fait une requête post pour un calcul avant et remplacer l'<id>
 

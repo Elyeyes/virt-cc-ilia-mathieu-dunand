@@ -3,6 +3,18 @@ import pika
 import time, jsonify, redis, sys
 import os
 
+
+def connect_to_rabbitmq():
+    while True:
+        try:
+            connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', heartbeat=30))
+            print("Connected to RabbitMQ!")
+            return connection
+        except pika.exceptions.AMQPConnectionError:
+            print("Waiting for RabbitMQ to be ready...")
+            time.sleep(4)
+
+
 def make_calc(expression, calc_id):
         r = redis.Redis(host='redis', port=6379, decode_responses=True, db=0)
         
@@ -14,7 +26,7 @@ def calc():
     # amqp_url = os.environ['AMQP_URL']
     # url_params = pika.URLParameters(amqp_url)
     
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
+    connection = connect_to_rabbitmq()
     channel = connection.channel()
     
     channel.queue_declare(queue='calculs_queue', durable=True)
@@ -25,7 +37,7 @@ def calc():
             data = json.loads(body)
             make_calc(data['expression'], data['calc_id'])
         except Exception as e:
-            return jsonify({"Error while calculating": str(e)}), 400
+            print(f"Error while calculating: {e}")
         time.sleep(5)
         ch.basic_ack(delivery_tag=method.delivery_tag)
     

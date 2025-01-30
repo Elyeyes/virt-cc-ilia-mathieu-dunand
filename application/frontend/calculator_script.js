@@ -1,4 +1,4 @@
-const url_api = 'http://127.0.0.1:sv/api';
+const url_api = 'http://127.0.0.1:5000/api';
 
 function appendNumber(number) {
     document.getElementById('display').value += number;
@@ -10,7 +10,7 @@ function appendOperator(operator) {
 
 function calculate() {
     const display = document.getElementById('display');
-    fetch("http://127.0.0.1:5000/api/calculate", {
+    fetch(`${url_api}/calculate`, {
         method: "POST",
         body: JSON.stringify({
             expression: display.value
@@ -31,10 +31,17 @@ function calculate() {
 
 function displayResult(id) {
     const display = document.getElementById('display');
-    fetch("http://127.0.0.1:5000/api/result/" + id)
+    fetch(`${url_api}/result/${id}`)
     .then(response => response.json())
     .then(data => {
-        display.value = data;
+        if (data.error) {
+            display.value = data.error;
+        } else {
+            display.value = data.result || data;
+        }
+    })
+    .catch(error => {
+        display.value = 'Error';
     });
 }
 
