@@ -1,4 +1,4 @@
-/* body {
+body {
     font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
@@ -45,4 +45,9 @@ button:hover {
 
 button:active {
     background-color: #d0d0d0;
-} */
+}
+
+#calculator div {
+    display: flex;
+    justify-content: space-between;
+}
