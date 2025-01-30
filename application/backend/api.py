@@ -1,4 +1,5 @@
 import pika
+import os
 import redis
 from flask import Flask, jsonify, request
 from flask_cors import CORS # type: ignore
@@ -7,6 +8,15 @@ api = Flask(__name__)
 CORS(api)
 
 r = redis.Redis(host='redis', port=6379, decode_responses=True, db=0)
+
+try:
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
+    channel = connection.channel()
+    channel.queue_declare(queue='calculs_queue', durable=True)
+except pika.exceptions.AMQPConnectionError as e:
+    print(f"Error connecting to RabbitMQ: {e}")
+    connection = None
+    channel = None
 
 results = {}
 
@@ -18,13 +28,17 @@ def home():
 def calculate():
     data = request.get_json()
     expression = data.get('expression')
+    calc_id = str(r.incr('calc_id')) 
     try:
-        result = eval(expression)
-        calc_id = str(r.incr('calc_id')) 
-        r.set(calc_id, result)
-        return jsonify({"id": calc_id, "result": result})
+        import json
+        channel.basic_publish(exchange='',
+                      routing_key='calculs_queue',
+                      body=json.dumps({'expression': expression,
+                                       'calc_id': calc_id}))
+        print(" [x] Sent {body}")
+        return jsonify({"id": calc_id, "calcul": expression}), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error queuing the calc": str(e)}), 400
 
 # Requête test POST calcul : curl -X POST http://localhost:5000/api/calculate -H "Content-Type: application/json" -d "{\"expression\": \"2+2\"}"
 

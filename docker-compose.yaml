@@ -1,6 +1,18 @@
 version: '3.8'
 
 services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbit_mqdata:/usr/share/rabbitmq/data
+
   backend:
     build: ./application/backend
     container_name: backend
@@ -12,6 +24,7 @@ services:
     environment:
       - REDIS_HOST=redis
       - RABBITMQ_HOST=rabbitmq
+      
 
   frontend:
     build: ./application/frontend
@@ -28,6 +41,8 @@ services:
     environment:
       - REDIS_HOST=redis
       - RABBITMQ_HOST=rabbitmq
+    volumes:
+      - ./consumer:/usr/src/app/consumer    
 
   redis:
     image: redis:latest
@@ -35,12 +50,6 @@ services:
     ports:
       - "6379:6379"
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+volumes:
+    rabbit_mqdata:
+      driver: local
