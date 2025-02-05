@@ -1,67 +1,74 @@
 terraform {
   required_providers {
     scaleway = {
-      source = "scaleway/scaleway"
+      source  = "scaleway/scaleway"
+      version = "2.49.0"
     }
   }
   required_version = ">= 0.13"
 }
 
 provider "scaleway" {
+  zone   = "fr-par-1"
   region = "fr-par"
 }
 
 resource "scaleway_registry_namespace" "registry" {
   name        = "container-registry"
-  description = "Main container registry"
+  description = "Registry calculatrice"
 }
 
 resource "scaleway_k8s_cluster" "cluster" {
-  name    = "cluster"
-  version = "1.21.5"
-  # private_network_id          = var.vpc_id
-  cni = "cilium"
-  # project_id                  = var.project_id
+  name                        = "calculatrice-dunand-mathieu-cluster"
+  version                     = "1.29.1"
+  cni                         = "cilium"
   delete_additional_resources = false
 }
 
-resource "scaleway_rdb_instance" "prod_db" {
-  name      = "prod-db"
-  node_type = "DB-DEV-S"
-  engine    = "redis"
-  password  = var.db_password
+resource "scaleway_rdb_instance" "redis_instance" {
+  name              = "calculatrice-${var.environment}-rdb"
+  engine            = "redis"
+  node_type         = var.environment == "prod" ? "DB-GENERAL-XS" : "DB-DEV-S"
+  volume_size_in_gb = var.environment == "prod" ? 20 : 10
+  region            = "fr-par"
+  user_name         = "admin"
+  password          = var.redis_password
 }
 
-resource "scaleway_lb" "dev_lb" {
-  name = "dev-lb"
-  # project_id = var.project_id
-  type = "LB-S"
+resource "scaleway_rdb_database" "dev" {
+  count       = var.environment == "dev" ? 1 : 0
+  instance_id = scaleway_rdb_instance.redis_instance.id
+  name        = "calculatrice-dev-db"
 }
 
-resource "scaleway_lb" "prod_lb" {
-  name = "prod-lb"
-  # project_id = var.project_id
-  type = "LB-S"
+resource "scaleway_rdb_database" "prod" {
+  count       = var.environment == "prod" ? 1 : 0
+  instance_id = scaleway_rdb_instance.redis_instance.id
+  name        = "calculatrice-prod-db"
 }
 
-resource "scaleway_domain_record" "prod_dns" {
-  dns_zone = "kiowy.net"
-  name     = "calculatrice-dunand-mathieu-polytech-dijon.kiowy.net"
+resource "scaleway_domain_record" "dns" {
+  dns_zone = "polytech-dijon.kiowy.net"
+  name     = var.environment == "dev" ? "calculatrice-dev-dunand-mathieu" : "calculatrice-dunand-mathieu"
   type     = "A"
-  data     = "1.2.3.4"
-  # value = scaleway_lb.prod_lb.ip
-  ttl = 3600
+  data     = scaleway_lb_ip.ip.ip_address
+  ttl      = 3600
 }
 
-resource "scaleway_domain_record" "dev_dns" {
-  dns_zone = "kiowy.net"
-  name     = "calculatrice-dev-dunand-mathieu-polytech-dijon.kiowy.net"
-  type     = "A"
-  data     = "1.2.3.4"
-  # value = scaleway_lb.dev_lb.ip
-  ttl = 3600
+resource "scaleway_lb_ip" "ip" {
+  zone = "fr-par-1"
 }
 
-# export AWS_ACCESS_KEY_ID="<access-key-id>"
-# export AWS_SECRET_ACCESS_KEY="<access-key-secret>"
-# export AWS_REGION="eu-west-3"
+resource "scaleway_lb" "lb" {
+  ip_ids = [scaleway_lb_ip.ip.id]
+  zone   = scaleway_lb_ip.ip.zone
+  name   = "calc-${var.environment}-lb"
+  type   = "LB-S"
+}
+
+
+output "lb_ip" {
+  value       = scaleway_lb_ip.ip.ip_address
+  description = "Adresse IP du load balancer"
+}
+
