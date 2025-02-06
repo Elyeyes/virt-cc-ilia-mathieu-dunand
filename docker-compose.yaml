@@ -1,16 +1,11 @@
 
 services:
   rabbitmq:
-    image: rabbitmq:3.13-management
+    image: rabbitmq
     container_name: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    volumes:
-      - rabbit_mqdata:/usr/share/rabbitmq/data
 
   backend:
     build: ./application/backend
@@ -26,10 +21,12 @@ services:
       
 
   nginx:
+      build:
+        context: ./application/frontend
+        dockerfile: Dockerfile
       restart: always
-      image: nginx:alpine
       ports:
-        - 3000:3000
+        - 80:80
       depends_on:
         - backend
 

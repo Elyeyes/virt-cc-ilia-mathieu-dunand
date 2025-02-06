@@ -1,5 +1,4 @@
 FROM nginx:alpine
-WORKDIR /application/frontend
-COPY ./ /usr/share/nginx/html
-EXPOSE 3000
+WORKDIR /usr/share/nginx/html
+COPY . .
 
