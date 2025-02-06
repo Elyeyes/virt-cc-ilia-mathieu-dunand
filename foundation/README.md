@@ -1,6 +1,35 @@
+# Architecture
+
+```mermaid
+
+graph LR
+  subgraph k8s ["calculatrice-dunand-mathieu-cluster"]
+    direction TB
+    node1
+    node2
+    node3
+  end
+  lbA["LoadBalancer
+        (calc-prod-lb)"] --> k8s
+  lbB["LoadBalancer
+        (calc-dev-lb)"]  --> k8s
+  dns1(["DNS
+        calculatrice-dev-dunand-mathieu"]) --> lbB
+  dns2(["DNS
+        calculatrice-dunand-mathieu"]) --> lbA
+  k8s --> db["Base de données
+              (calculatrice-prod-db)"]
+  k8s --> reg["registre de conteneur
+  (container-registry)"]
+  k8s --> db2["Base de données
+              (calculatrice-dev-db)"]
+
+```
 
 
-Résultat de terraform plan:
+# Résultat de terraform plan:
+
+```console
 Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
   + create
 
@@ -13,7 +42,7 @@ Terraform will perform the following actions:
       + fqdn            = (known after apply)
       + id              = (known after apply)
       + keep_empty_zone = false
-      + name            = "calculatrice-dunand-mathieu"
+      + name            = "calculatrice-dev-dunand-mathieu"
       + priority        = (known after apply)
       + project_id      = (known after apply)
       + root_zone       = (known after apply)
@@ -56,7 +85,7 @@ Terraform will perform the following actions:
           + (known after apply),
         ]
       + ipv6_address            = (known after apply)
-      + name                    = "calc-prod-lb"
+      + name                    = "calc-dev-lb"
       + organization_id         = (known after apply)
       + project_id              = (known after apply)
       + region                  = (known after apply)
@@ -78,12 +107,12 @@ Terraform will perform the following actions:
       + zone            = "fr-par-1"
     }
 
-  # scaleway_rdb_database.prod[0] will be created
-  + resource "scaleway_rdb_database" "prod" {
+  # scaleway_rdb_database.dev[0] will be created
+  + resource "scaleway_rdb_database" "dev" {
       + id          = (known after apply)
       + instance_id = (known after apply)
       + managed     = (known after apply)
-      + name        = "calculatrice-prod-db"
+      + name        = "calculatrice-dev-db"
       + owner       = (known after apply)
       + region      = (known after apply)
       + size        = (known after apply)
@@ -101,8 +130,8 @@ Terraform will perform the following actions:
       + engine                    = "redis"
       + id                        = (known after apply)
       + is_ha_cluster             = false
-      + name                      = "calculatrice-prod-rdb"
-      + node_type                 = "DB-GENERAL-XS"
+      + name                      = "calculatrice-dev-rdb"
+      + node_type                 = "DB-DEV-S"
       + organization_id           = (known after apply)
       + password                  = (sensitive value)
       + project_id                = (known after apply)
@@ -110,7 +139,7 @@ Terraform will perform the following actions:
       + region                    = "fr-par"
       + settings                  = (known after apply)
       + user_name                 = "admin"
-      + volume_size_in_gb         = 20
+      + volume_size_in_gb         = 10
       + volume_type               = "lssd"
 
       + load_balancer (known after apply)
@@ -133,3 +162,6 @@ Plan: 7 to add, 0 to change, 0 to destroy.
 
 Changes to Outputs:
   + lb_ip = (known after apply)
+
+────────────────────────────────────────────────────────────────
+```

@@ -36,15 +36,15 @@ resource "scaleway_rdb_instance" "redis_instance" {
 }
 
 resource "scaleway_rdb_database" "dev" {
+  name        = "calculatrice-dev-db"
   count       = var.environment == "dev" ? 1 : 0
   instance_id = scaleway_rdb_instance.redis_instance.id
-  name        = "calculatrice-dev-db"
 }
 
 resource "scaleway_rdb_database" "prod" {
+  name        = "calculatrice-prod-db"
   count       = var.environment == "prod" ? 1 : 0
   instance_id = scaleway_rdb_instance.redis_instance.id
-  name        = "calculatrice-prod-db"
 }
 
 resource "scaleway_domain_record" "dns" {

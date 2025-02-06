@@ -9,29 +9,33 @@ body {
 }
 
 #calculator {
-    background-color: #fff;
+    background-color: #465A65;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 200px;
+    width: 250px;
 }
 
 #display {
-    width: 100%;
+    width: 90%;
     height: 40px;
     margin-bottom: 10px;
     text-align: right;
     padding: 10px;
-    font-size: 18px;
+    font-family: 'Electrolize', sans-serif;
+    font-size: 25px;
+    background-color: #DDEDC8;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
 
 button {
-    width: 40px;
+    width: 50px;
     height: 40px;
     margin: 5px;
     font-size: 18px;
+    font-weight: bold;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
     border: none;
     border-radius: 5px;
     background-color: #f9f9f9;
@@ -50,4 +54,9 @@ button:active {
 #calculator div {
     display: flex;
     justify-content: space-between;
+}
+
+@font-face {
+    font-family: 'Electrolize';
+    src: url('https://fonts.gstatic.com/s/electrolize/v18/cIf5Ma1dtE0zSiGSiED7AXEBuI8.woff2');
 }
