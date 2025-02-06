@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: virt-cc-ilia-mathieu-dunand-backend:latest
+          image: europe-west1-docker.pkg.dev/polytech-dijon/polytech-dijon/dunand-mathieu-backend:latest
           resources:
             requests:
               cpu: "4m"

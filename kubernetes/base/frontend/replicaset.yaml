@@ -19,7 +19,7 @@ spec:
         soft: nginx
     spec:
       containers:
-        - image: nginx:latest
+        - image: europe-west1-docker.pkg.dev/polytech-dijon/polytech-dijon/dunand-mathieu-frontend:latest
           name: nginx
           # env:
           #   - name: API_URL
