@@ -1,2 +1,2 @@
-environment    = "prod"
-redis_password = "prod-password"
+environment    = "dev"
+redis_password = "dunand-mathieu-password"

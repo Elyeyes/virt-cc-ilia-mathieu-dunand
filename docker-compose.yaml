@@ -25,11 +25,13 @@ services:
       - RABBITMQ_HOST=rabbitmq
       
 
-  frontend:
-    build: ./application/frontend
-    container_name: frontend
-    ports:
-      - "3000:3000"
+  nginx:
+      restart: always
+      image: nginx:alpine
+      ports:
+        - 3000:3000
+      depends_on:
+        - backend
 
   consumer:
     build: ./application/consumer

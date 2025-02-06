@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  labels:
+    app: frontend
+    soft: nginx
+  name: frontend-replicaset
+  namespace: dunand-mathieu
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend
+      soft: nginx
+  template:
+    metadata:
+      labels:
+        app: frontend
+        soft: nginx
+    spec:
+      containers:
+        - image: nginx:latest
+          name: nginx
+          # env:
+          #   - name: API_URL
+          #     value: "http://api-service:80"
+          resources:
+            requests:
+              cpu: "4m"
+              memory: "32Mi"
+          ports:
+            - containerPort: 3000

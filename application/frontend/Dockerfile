@@ -1,5 +1,5 @@
-FROM python:3.10-slim
+FROM nginx:alpine
 WORKDIR /application/frontend
-COPY . .
+COPY ./ /usr/share/nginx/html
 EXPOSE 3000
-CMD ["python", "-m", "http.server", "3000"]
+
