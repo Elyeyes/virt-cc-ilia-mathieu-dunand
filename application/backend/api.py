@@ -8,11 +8,11 @@ from flask_cors import CORS # type: ignore
 api = Flask(__name__)
 CORS(api)
 
-r = redis.Redis(host='redis', port=6379, decode_responses=True, db=0)
+r = redis.Redis(host='redis-service', port=6379, decode_responses=True, db=0)
 
 while True:
     try:
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', heartbeat=30))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq-service', heartbeat=30))
         channel = connection.channel()
         channel.queue_declare(queue='calculs_queue', durable=True)
         break

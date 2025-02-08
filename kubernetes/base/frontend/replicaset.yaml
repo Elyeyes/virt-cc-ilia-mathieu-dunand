@@ -19,7 +19,7 @@ spec:
         soft: nginx
     spec:
       containers:
-        - image: europe-west1-docker.pkg.dev/polytech-dijon/polytech-dijon/dunand-mathieu-frontend:latest
+        - image: europe-west1-docker.pkg.dev/polytech-dijon/polytech-dijon/frontend-dunand-mathieu
           name: nginx
           # env:
           #   - name: API_URL
@@ -28,5 +28,3 @@ spec:
             requests:
               cpu: "4m"
               memory: "32Mi"
-          ports:
-            - containerPort: 3000

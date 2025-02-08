@@ -7,7 +7,7 @@ import os
 def connect_to_rabbitmq():
     while True:
         try:
-            connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', heartbeat=30))
+            connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq-service', heartbeat=30))
             print("Connected to RabbitMQ!")
             return connection
         except pika.exceptions.AMQPConnectionError:
@@ -16,7 +16,7 @@ def connect_to_rabbitmq():
 
 
 def make_calc(expression, calc_id):
-        r = redis.Redis(host='redis', port=6379, decode_responses=True, db=0)
+        r = redis.Redis(host='redis-service', port=6379, decode_responses=True, db=0)
         
         result = eval(expression)
         

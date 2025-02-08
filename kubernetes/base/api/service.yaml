@@ -10,3 +10,4 @@ spec:
     - protocol: TCP
       port: 5000
       targetPort: 5000 # Port exposé par le container API
+  type: ClusterIP 

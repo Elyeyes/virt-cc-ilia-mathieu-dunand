@@ -3,10 +3,14 @@ kind: Service
 metadata:
   name: frontend-service
   namespace: dunand-mathieu
+  labels:
+    app: frontend
+    soft: nginx
 spec:
   selector:
     app: frontend
   ports:
     - protocol: TCP
-      port: 3000
-      targetPort: 3000 # Port exposé par le container Frontend
+      port: 80
+      targetPort: 80 # Port exposé par le container Frontend
+  type: ClusterIP
