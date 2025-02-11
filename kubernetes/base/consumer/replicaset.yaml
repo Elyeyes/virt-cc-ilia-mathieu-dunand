@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: consumer
+  namespace: dunand-mathieu
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: consumer
+  template:
+    metadata:
+      labels:
+        app: consumer
+    spec:
+      containers:
+        - name: consumer
+          image: europe-west1-docker.pkg.dev/polytech-dijon/polytech-dijon/dunand-mathieu-consumer
+          resources:
+            requests:
+              cpu: "4m"
+              memory: "32Mi"

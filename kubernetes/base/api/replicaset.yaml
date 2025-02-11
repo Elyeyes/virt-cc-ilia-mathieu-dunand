@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  labels:
+    app: api
+  name: api-replicaset
+  namespace: dunand-mathieu
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: container-api
+          image: europe-west1-docker.pkg.dev/polytech-dijon/polytech-dijon/backend-dunand-mathieu
+          ports:
+              - containerPort: 5000
+          resources:
+            requests:
+              cpu: "4m"
+              memory: "32Mi"

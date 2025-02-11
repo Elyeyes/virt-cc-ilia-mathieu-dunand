@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  labels:
+    app: frontend
+    soft: nginx
+  name: frontend-replicaset
+  namespace: dunand-mathieu
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend
+      soft: nginx
+  template:
+    metadata:
+      labels:
+        app: frontend
+        soft: nginx
+    spec:
+      containers:
+        - image: europe-west1-docker.pkg.dev/polytech-dijon/polytech-dijon/frontend-dunand-mathieu
+          name: nginx
+          resources:
+            requests:
+              cpu: "4m"
+              memory: "32Mi"

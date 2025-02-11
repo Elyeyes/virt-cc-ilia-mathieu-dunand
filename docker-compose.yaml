@@ -1,0 +1,47 @@
+
+services:
+  rabbitmq:
+    image: rabbitmq
+    container_name: rabbitmq-service
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  backend:
+    build: ./application/backend
+    container_name: backend-service
+    ports:
+      - 5000:5000
+    depends_on:
+      - rabbitmq
+      - redis
+    environment:
+      - REDIS_HOST=redis-service
+      - RABBITMQ_HOST=rabbitmq-service
+      
+
+  nginx:
+      build:
+        context: ./application/frontend
+        dockerfile: Dockerfile
+      restart: always
+      ports:
+        - "8080:80"
+      depends_on:
+        - backend
+
+  consumer:
+    build: ./application/consumer
+    container_name: consumer
+    depends_on:
+      - rabbitmq
+      - redis
+    environment:
+      - REDIS_HOST=redis-service
+      - RABBITMQ_HOST=rabbitmq-service    
+
+  redis:
+    image: redis:latest
+    container_name: redis-service
+    ports:
+      - "6379:6379"
