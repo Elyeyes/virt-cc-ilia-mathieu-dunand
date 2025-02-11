@@ -3,8 +3,6 @@ kind: Ingress
 metadata:
   name: calculatrice-ingress
   namespace: dunand-mathieu
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
@@ -18,10 +16,10 @@ spec:
                 name: frontend-service
                 port:
                   number: 8080
-          - path: /api/
+          - path: /api
             pathType: Prefix
             backend:
               service:
-                name: api-service
+                name: backend-service
                 port:
                   number: 5000

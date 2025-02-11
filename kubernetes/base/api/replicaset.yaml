@@ -17,11 +17,9 @@ spec:
     spec:
       containers:
         - name: container-api
-          image: europe-west1-docker.pkg.dev/polytech-dijon/polytech-dijon/dunand-mathieu-backend:latest
+          image: europe-west1-docker.pkg.dev/polytech-dijon/polytech-dijon/backend-dunand-mathieu
           ports:
-            - name: hhtp
-              containerPort: 5000
-              protocol: TCP
+              - containerPort: 5000
           resources:
             requests:
               cpu: "4m"

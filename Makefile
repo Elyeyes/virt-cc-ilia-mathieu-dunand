@@ -6,7 +6,7 @@ all: clean setup apply
 
 clean:
 	kubectl delete all --all -n $(NAMESPACE)
-	kubectl delete -f kubernetes/ingress.yaml
+	
 setup:
 	kubectl get namespace $(NAMESPACE) || kubectl create namespace $(NAMESPACE)
 	kubectl config set-context --current --namespace=$(NAMESPACE)

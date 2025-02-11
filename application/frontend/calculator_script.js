@@ -1,4 +1,5 @@
-const url_api = 'calculatrice-dunand-mathieu.polytech-dijon.kiowy.net/api';
+const url_api = 'http://calculatrice-dunand-mathieu.polytech-dijon.kiowy.net/api';
+// const url_api = 'http://localhost:5000/api';
 
 function appendNumber(number) {
     document.getElementById('display').value += number;
@@ -12,20 +13,31 @@ function calculate() {
     const display = document.getElementById('display');
     fetch(`${url_api}/calculate`, {
         method: "POST",
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+          },        
         body: JSON.stringify({
             expression: display.value
-        }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8"
+        })
+    })
+    .then(async response => {
+        const text = await response.text();
+        try {
+          return JSON.parse(text);
+        } catch {
+          console.error("Erreur backend: ", text);
+          throw new Error("Le backend a retourné une erreur HTML");
         }
     })
-    .then(response => response.json())
     .then(data => {
         if (data.id) {
             displayResult(data.id);
         } else {
             display.value = data.error;
         }
+    })
+    .catch(error => {
+        console.error('Erreur opération fetch : ', error);
     });
 }
 

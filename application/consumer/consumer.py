@@ -7,7 +7,7 @@ import os
 def connect_to_rabbitmq():
     while True:
         try:
-            connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq-service', heartbeat=30))
+            connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq-service', heartbeat=3600))
             print("Connected to RabbitMQ!")
             return connection
         except pika.exceptions.AMQPConnectionError:

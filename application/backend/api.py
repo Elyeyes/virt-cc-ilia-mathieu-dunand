@@ -12,7 +12,7 @@ r = redis.Redis(host='redis-service', port=6379, decode_responses=True, db=0)
 
 while True:
     try:
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq-service', heartbeat=30))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq-service', heartbeat=3600))
         channel = connection.channel()
         channel.queue_declare(queue='calculs_queue', durable=True)
         break
@@ -24,11 +24,12 @@ while True:
 
 results = {}
 
+
 @api.route('/')
 def home():
     return "API is running!"
 
-@api.route('/api/calculate', methods=['POST'])
+@api.route('/api/calculate', methods=['GET', 'POST'])
 def calculate():
     data = request.get_json()
     expression = data.get('expression')
@@ -36,12 +37,25 @@ def calculate():
     try:
         import json
         if channel is not None:
-            channel.basic_publish(exchange='',
-                          routing_key='calculs_queue',
-                          body=json.dumps({'expression': expression,
-                                           'calc_id': calc_id}))
-            print(f" [x] Sent {json.dumps({'expression': expression, 'calc_id': calc_id})}")
-            return jsonify({"id": calc_id, "calcul": expression}), 200
+            for _ in range(3): 
+                try:
+                    channel.basic_publish(exchange='',
+                                          routing_key='calculs_queue',
+                                          body=json.dumps({'expression': expression,
+                                                           'calc_id': calc_id}))
+                    print(f" [x] Sent {json.dumps({'expression': expression, 'calc_id': calc_id})}")
+                    return jsonify({"id": calc_id, "calcul": expression}), 200
+                except pika.exceptions.ConnectionClosedByBroker as e:
+                    print(f"Connection closed by broker: {e}")
+                    time.sleep(2)
+                except pika.exceptions.AMQPChannelError as e:
+                    print(f"AMQP Channel Error: {e}")
+                    time.sleep(2)
+                except pika.exceptions.AMQPConnectionError as e:
+                    print(f"AMQP Connection Error: {e}")
+                    time.sleep(2)
+            print("Failed to publish message after retries")
+            return jsonify({"error": "Failed to publish message after retries"}), 500
         else:
             print("RabbitMQ channel is not available")
             return jsonify({"error": "RabbitMQ channel is not available"}), 500

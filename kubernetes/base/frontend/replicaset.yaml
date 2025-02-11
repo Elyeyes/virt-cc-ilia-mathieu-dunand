@@ -21,9 +21,6 @@ spec:
       containers:
         - image: europe-west1-docker.pkg.dev/polytech-dijon/polytech-dijon/frontend-dunand-mathieu
           name: nginx
-          # env:
-          #   - name: API_URL
-          #     value: "http://api-service:80"
           resources:
             requests:
               cpu: "4m"
