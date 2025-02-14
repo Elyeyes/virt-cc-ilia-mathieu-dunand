@@ -41,7 +41,7 @@ et:
     subgraph "consumer-replicaset"
       pod-consumer
     end
-    svc-api([svc-api]) --> pod-api
+    svc-api{svc-api} --> pod-api
     svc-redis([svc-redis]) --> pod-redis
     svc-rabbitmq([svc-rabbitmq]) --> pod-rabbitmq
     pod-consumer -.-> svc-rabbitmq
@@ -50,7 +50,7 @@ et:
     pod-api -.-> svc-rabbitmq
     ing -->|"calculatrice-dunand-mathieu-polytech-dijon.kiowy.net
 /api"| svc-api
-    ing(Ingress NGINX rules) -->|"calculatrice-dunand-mathieu-polytech-dijon.kiowy.net
+    ing{{Ingress NGINX rules}} -->|"calculatrice-dunand-mathieu-polytech-dijon.kiowy.net
 /"| svc-front
     svc-front([svc-front]) --> pod-front
     end
