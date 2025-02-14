@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: consumer
-          image: europe-west1-docker.pkg.dev/polytech-dijon/polytech-dijon/dunand-mathieu-consumer
+          image: europe-west1-docker.pkg.dev/polytech-dijon/polytech-dijon/consumer-dunand-mathieu
           resources:
             requests:
               cpu: "4m"
