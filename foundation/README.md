@@ -17,8 +17,8 @@ graph LR
         calculatrice-dev-dunand-mathieu"]) --> lbB
   dns2(["DNS
         calculatrice-dunand-mathieu"]) --> lbA
-  k8s --> db["Base de données
-              (calculatrice-prod-db)"]
+  k8s --> db[("Base de données
+              (calculatrice-prod-db)")]
   k8s --> reg["registre de conteneur
   (container-registry)"]
   k8s --> db2["Base de données
