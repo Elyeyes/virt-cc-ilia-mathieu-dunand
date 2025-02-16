@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: rabbitmq-replicaset
+  namespace: dunand-mathieu
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:latest
+          resources:
+            requests:
+              cpu: "4m"
+              memory: "32Mi"
